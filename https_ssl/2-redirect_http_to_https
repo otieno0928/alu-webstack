@@ -1,0 +1,33 @@
+global
+log /dev/loglocal0
+log /dev/loglocal1 notice
+chroot /var/lib/haproxy
+user haproxy
+group haproxy
+daemon
+ca-base /etc/ssl/certs
+crt-base /etc/ssl/private
+
+defaults
+logglobal
+modehttp
+optionhttplog
+optiondontlognull
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+
+frontend haproxy_frontend
+bind *:80
+bind *:443 ssl crt /etc/haproxy/certs/www.holberton.online.pem
+mode http
+
+# Automatically redirect unencrypted HTTP traffic to HTTPS with 301
+redirect scheme https if !{ ssl_fc }
+
+default_backend haproxy_backend
+
+backend haproxy_backend
+balance roundrobin
+server web-01 13.40.153.43:80 check
+server web-02 3.8.141.113:80 check

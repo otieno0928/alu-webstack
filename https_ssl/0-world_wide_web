@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2086
+# Audits domain and subdomains (www, lb-01, web-01, web-02) using dig and awk
+
+audit_subdomain() {
+    local sub=$1
+    local dom=$2
+    local full_name="${sub}.${dom}"
+    
+    local ip
+    ip=$(dig +short "${full_name}" | awk '/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ {print; exit}')
+    
+    if [ -n "$ip" ]; then
+        echo "The subdomain ${sub} is a A record and points to ${ip}"
+    fi
+}
+
+DOMAIN=$1
+SUBDOMAIN=$2
+
+if [ -n "$SUBDOMAIN" ]; then
+    audit_subdomain "$SUBDOMAIN" "$DOMAIN"
+else
+    for sub in www lb-01 web-01 web-02; do
+        audit_subdomain "$sub" "$DOMAIN"
+    done
+fi
