@@ -1,29 +1,29 @@
 global
-0-world_wide_web log /dev/loglocal0
-0-world_wide_web log /dev/loglocal1 notice
-0-world_wide_web chroot /var/lib/haproxy
-0-world_wide_web user haproxy
-0-world_wide_web group haproxy
-0-world_wide_web daemon
-0-world_wide_web ca-base /etc/ssl/certs
-0-world_wide_web crt-base /etc/ssl/private
+log /dev/loglocal0
+log /dev/loglocal1 notice
+chroot /var/lib/haproxy
+user haproxy
+group haproxy
+daemon
+ca-base /etc/ssl/certs
+crt-base /etc/ssl/private
 
 defaults
-0-world_wide_web logglobal
-0-world_wide_web modehttp
-0-world_wide_web optionhttplog
-0-world_wide_web optiondontlognull
+logglobal
+modehttp
+optionhttplog
+optiondontlognull
     timeout connect 5000
     timeout client  50000
     timeout server  50000
 
 frontend haproxy_frontend
-0-world_wide_web bind *:80
-0-world_wide_web bind *:443 ssl crt /etc/haproxy/certs/www.holberton.online.pem
-0-world_wide_web mode http
-0-world_wide_web default_backend haproxy_backend
+bind *:80
+bind *:443 ssl crt /etc/haproxy/certs/www.holberton.online.pem
+mode http
+default_backend haproxy_backend
 
 backend haproxy_backend
-0-world_wide_web balance roundrobin
-0-world_wide_web server web-01 13.40.153.43:80 check
-0-world_wide_web server web-02 3.8.141.113:80 check
+balance roundrobin
+server web-01 13.40.153.43:80 check
+server web-02 3.8.141.113:80 check
